@@ -1,72 +1,57 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import InCall from "@/components/InCall";
+import KeyScreen from "@/components/KeyScreen";
 
-export default function Home() {
+export default function FlippedPhone() {
   const initialButtons = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "*", "0", "#"];
   const [buttons, setButtons] = useState(initialButtons);
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [inCall, setInCall] = useState(false);
 
+  // On mount, set interval to scramble letters every 200 milliseconds 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setButtons((prevButtons) => [...prevButtons].sort(() => Math.random() - 0.5));
+    setInterval(() => {
+      setButtons([...buttons].sort(() => Math.random() - 0.5));
     }, 200);
-    // on unmount, clear interval
-    return () => clearInterval(interval);
   }, []);
 
+  // Append digit to number
   function handleClick(num) {
     setPhoneNumber(phoneNumber + num);
     setButtons([...buttons].sort(() => Math.random() - 0.5));
   };
-  // Delete last digit
+
+  // Delete last digit of number
   function handleDelete() {
     setPhoneNumber(phoneNumber.slice(0, -1));
   };
-  // Call alert, clear input
+
+  // Toggle call state to call
   function handleCall() {
-    alert(`Calling ${phoneNumber}...`);
+    setInCall(true); // switch to call screen
+  };
+
+  // Toggle call state to end
+  function handleEndCall() {
+    setInCall(false);
     setPhoneNumber("");
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-white p-8">
-      <h3 className="text-3xl font-bold text-gray-800 mb-6 text-center">
-        FlippedPhone
-      </h3>
-      <input
-        type="text"
-        value={phoneNumber}
-        disabled
-        className="w-44 h-12 mb-6 text-center border border-gray-300 rounded focus:outline-none bg-gray-100 text-black text-lg"
-      />
-
-      <div className="grid grid-cols-3 gap-3 mb-4">
-        {buttons.map((num, index) => (
-          <button
-            key={index}
-            onClick={() => handleClick(num)}
-            className="w-14 h-14 bg-gray-200 rounded hover:bg-gray-300 transition-colors cursor-pointer flex items-center justify-center font-semibold text-black text-lg"
-          >
-            {num}
-          </button>
-        ))}
-      </div>
-
-      <div className="flex gap-4">
-        <button
-          onClick={handleDelete}
-          className="w-24 h-12 bg-red-500 hover:bg-red-600 text-white rounded font-semibold transition-colors"
-        >
-          X
-        </button>
-
-        <button
-          onClick={handleCall}
-          className="w-24 h-12 bg-green-500 hover:bg-green-600 text-white rounded font-semibold transition-colors"
-        >
-          Call
-        </button>
-      </div>
+    <div className="scale-150">
+      {inCall ?
+        <InCall
+          phoneNumber={phoneNumber}
+          handleEndCall={handleEndCall} /> :
+        <KeyScreen
+          phoneNumber={phoneNumber}
+          buttons={buttons}
+          handleClick={handleClick}
+          handleDelete={handleDelete}
+          handleCall={handleCall}
+        />
+      }
     </div>
   );
 }
