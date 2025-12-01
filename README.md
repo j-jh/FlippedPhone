@@ -12,6 +12,8 @@ Wip...
 ---
 Deployment: https://flipped-phone.vercel.app/
 ---
+> **Note:** *Deployed app can not perform functional calls. Functional calling only works when run locally with valid API key and connected API endpoint.*
+---
 Dependencies:
 
 - React 19.2.x
